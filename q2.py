@@ -15,6 +15,8 @@ def imshow(img):
 
 def main():
     model = resnet18()
+    if use_gpu:
+        model = model.cuda()
     lossfn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters())
     train(model, optimizer, lossfn, 2)
@@ -27,7 +29,8 @@ def train(model, optimizer, lossfn, num_epochs):
         for i, data in enumerate(trainloader, 0):
             # get the inputs
             inputs, labels = data
-
+            if use_gpu:
+                images, labels = images.cuda(), labels.cuda()
             # zero the parameter gradients
             optimizer.zero_grad()
 
@@ -54,6 +57,8 @@ def test(model):
     with torch.no_grad():
         for data in testloader:
             images, labels = data
+            if use_gpu:
+                images, labels = images.cuda(), labels.cuda()
             outputs = model(images)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
@@ -80,4 +85,7 @@ if __name__ == '__main__':
 
     classes = ('plane', 'car', 'bird', 'cat',
                'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+    use_gpu = torch.cuda.is_available()
+
+
     main()
