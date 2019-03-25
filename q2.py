@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from nets import *
 import torch.optim as optim
+import argparse
 
 def imshow(img):
     img = img / 2 + 0.5     # unnormalize
@@ -14,13 +15,14 @@ def imshow(img):
 
 
 def main():
-    model = ResNet(BasicBlock, [1,1,1,1])
+    print(args.list, args.num_epocs)
+    model = ResNet(BasicBlock, args.list)
     if use_gpu:
         model = model.cuda()
     lossfn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters())
-    train(model, optimizer, lossfn, 4)
-    teZst(model)
+    train(model, optimizer, lossfn, args.num_epocs)
+    test(model)
 
 def train(model, optimizer, lossfn, num_epochs):
     for epoch in range(num_epochs):
@@ -48,7 +50,7 @@ def train(model, optimizer, lossfn, num_epochs):
                         (epoch + 1, i + 1, running_loss / 500))
                 running_loss = 0.0
 
-    œbt('Finished Training')
+    print('Finished Training')
     return model
 
 def test(model):
@@ -87,5 +89,19 @@ if __name__ == '__main__':
                'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
     use_gpu = torch.cuda.is_available()
 
+    CLI = argparse.ArgumentParser()
+    CLI.add_argument(
+        "--list",  # name on the CLI - drop the `--` for positional/required parameters
+        nargs="*",  # 0 or more values expected => creates a list
+        type=int,
+        default=[2, 2, 2, 2],  # default if nothing is provided
+    )
+
+    CLI.add_argument(
+        "--num_epocs",  # name on the CLI - drop the `--` for positional/required parameters
+        type=int,
+        default=4,  # default if nothing is provided
+    )
+    args = CLI.parse_args()
 
     main()
