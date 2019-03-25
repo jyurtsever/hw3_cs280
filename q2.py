@@ -16,7 +16,7 @@ def imshow(img):
 
 def main():
     print(args.list, args.num_epochs)
-    model = ResNet(BasicBlock, args.list)
+    model = ResNet(BasicBlock, args.depths, widths=tuple(args.widths))
     if use_gpu:
         model = model.cuda()
     lossfn = nn.CrossEntropyLoss()
@@ -91,10 +91,17 @@ if __name__ == '__main__':
 
     CLI = argparse.ArgumentParser()
     CLI.add_argument(
-        "--list",  # name on the CLI - drop the `--` for positional/required parameters
+        "--depths",  # name on the CLI - drop the `--` for positional/required parameters
         nargs="*",  # 0 or more values expected => creates a list
         type=int,
         default=[2, 2, 2, 2],  # default if nothing is provided
+    )
+
+    CLI.add_argument(
+        "--widths",  # name on the CLI - drop the `--` for positional/required parameters
+        nargs="*",  # 0 or more values expected => creates a list
+        type=int,
+        default=(64, 128, 256, 512),  # default if nothing is provided
     )
 
     CLI.add_argument(
