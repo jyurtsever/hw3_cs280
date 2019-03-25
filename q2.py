@@ -15,13 +15,13 @@ def imshow(img):
 
 
 def main():
-    print(args.list, args.num_epocs)
+    print(args.list, args.num_epochs)
     model = ResNet(BasicBlock, args.list)
     if use_gpu:
         model = model.cuda()
     lossfn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters())
-    train(model, optimizer, lossfn, args.num_epocs)
+    train(model, optimizer, lossfn, args.num_epochs)
     test(model)
 
 def train(model, optimizer, lossfn, num_epochs):
