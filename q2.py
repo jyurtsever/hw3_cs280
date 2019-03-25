@@ -15,7 +15,7 @@ def imshow(img):
 
 
 def main():
-    print(args.list, args.num_epochs)
+    print(args.depths, args.num_epochs)
     model = ResNet(BasicBlock, args.depths, widths=tuple(args.widths))
     if use_gpu:
         model = model.cuda()
