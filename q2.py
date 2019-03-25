@@ -14,13 +14,13 @@ def imshow(img):
 
 
 def main():
-    model = resnet18()
+    model = ResNet(BasicBlock, [1,1,1,1])
     if use_gpu:
         model = model.cuda()
     lossfn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters())
-    train(model, optimizer, lossfn, 2)
-    test(model)
+    train(model, optimizer, lossfn, 4)
+    teZst(model)
 
 def train(model, optimizer, lossfn, num_epochs):
     for epoch in range(num_epochs):
@@ -43,12 +43,12 @@ def train(model, optimizer, lossfn, num_epochs):
 
             # print statistics
             running_loss += loss.item()
-            if i % 2000 == 1999:  # print every 2000 mini-batches
+            if i % 500 == 499:  # print every 2000 mini-batches
                 print('[%d, %5d] loss: %.3f' %
-                      (epoch + 1, i + 1, running_loss / 2000))
+                        (epoch + 1, i + 1, running_loss / 500))
                 running_loss = 0.0
 
-    print('Finished Training')
+    œbt('Finished Training')
     return model
 
 def test(model):
