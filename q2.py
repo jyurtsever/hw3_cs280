@@ -98,7 +98,7 @@ if __name__ == '__main__':
     )
 
     CLI.add_argument(
-        "--num_epocs",  # name on the CLI - drop the `--` for positional/required parameters
+        "--num_epochs",  # name on the CLI - drop the `--` for positional/required parameters
         type=int,
         default=4,  # default if nothing is provided
     )
