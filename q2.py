@@ -33,6 +33,7 @@ def train(model, optimizer, lossfn, num_epochs):
             inputs, labels = data
             if use_gpu:
                 inputs, labels = inputs.cuda(), labels.cuda()
+            # print(inputs.shape, labels.shape)
             # zero the parameter gradients
             optimizer.zero_grad()
 
@@ -45,7 +46,7 @@ def train(model, optimizer, lossfn, num_epochs):
 
             # print statistics
             running_loss += loss.item()
-            if i % 500 == 499:  # print every 2000 mini-batches
+            if i % 2000 == 1999:  # print every 2000 mini-batches
                 print('[%d, %5d] loss: %.3f' %
                         (epoch + 1, i + 1, running_loss / 500))
                 running_loss = 0.0
@@ -71,24 +72,6 @@ def test(model):
 
 
 if __name__ == '__main__':
-    transform = transforms.Compose(
-        [transforms.ToTensor(),
-         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                            download=True, transform=transform)
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=4,
-                                              shuffle=True, num_workers=2)
-
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False,
-                                           download=True, transform=transform)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=4,
-                                             shuffle=False, num_workers=2)
-
-    classes = ('plane', 'car', 'bird', 'cat',
-               'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
-    use_gpu = torch.cuda.is_available()
-
     CLI = argparse.ArgumentParser()
     CLI.add_argument(
         "--depths",  # name on the CLI - drop the `--` for positional/required parameters
@@ -109,6 +92,32 @@ if __name__ == '__main__':
         type=int,
         default=4,  # default if nothing is provided
     )
+
+    CLI.add_argument(
+        "--batchsize",  # name on the CLI - drop the `--` for positional/required parameters
+        type=int,
+        default=4,  # default if nothing is provided
+    )
+
     args = CLI.parse_args()
+    transform = transforms.Compose(
+        [transforms.ToTensor(),
+         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+    trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
+                                            download=True, transform=transform)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size,
+                                              shuffle=True)
+
+    testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+                                           download=True, transform=transform)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=1,
+                                             shuffle=False,)
+
+    classes = ('plane', 'car', 'bird', 'cat',
+               'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+    use_gpu = torch.cuda.is_available()
+
+
 
     main()
