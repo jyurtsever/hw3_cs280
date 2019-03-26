@@ -94,7 +94,7 @@ if __name__ == '__main__':
     )
 
     CLI.add_argument(
-        "--batchsize",  # name on the CLI - drop the `--` for positional/required parameters
+        "--batch_size",  # name on the CLI - drop the `--` for positional/required parameters
         type=int,
         default=4,  # default if nothing is provided
     )
