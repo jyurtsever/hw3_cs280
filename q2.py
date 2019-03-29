@@ -20,7 +20,7 @@ def main():
     if use_gpu:
         model = model.cuda()
     lossfn = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=0.01, weight_decay=0.01)# optim.Adam(model.parameters())
+    optimizer = optim.Adam(model.parameters(), lr=0.01, weight_decay=0.01)# optim.Adam(model.parameters())
     train(model, optimizer, lossfn, args.num_epochs)
     test(model)
 
