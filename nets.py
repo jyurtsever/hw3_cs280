@@ -1,4 +1,6 @@
 import torch.nn as nn
+import torch.utils.data as data
+import numpy as np
 
 
 model_urls = {
@@ -236,3 +238,23 @@ def resnet18(**kwargs):
     """
     model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
     return model
+
+class RotDataset(data.Dataset):
+    """Dataset rotated by all multiples of 90 degrees."""
+    def __init__(self, base_dataset):
+        """base_dataset[i] is assumed to return (img, label)."""
+        self.items = []
+        for i in range(len(base_dataset)):
+            img = base_dataset[i][0]
+            self.items.append((img, 0))
+            self.items.append((np.rot90(img, k=1, axes=(0, 1)), 1))
+            self.items.append((np.rot90(img, k=2, axes=(0, 1)), 2))
+            self.items.append((np.rot90(img, k=3, axes=(0, 1)), 3))
+    
+
+    def __len__(self):
+        return len(self.items)
+    
+    def __getitem__(self, idx):
+        """Returns (img, label), where img is rotated by label * pi/2."""
+        return self.items[idx]
