@@ -94,8 +94,8 @@ def test(model):
             total += labels.size(0)
             correct_train += (predicted == labels).sum().item()
 
-    print('Accuracy of the network on the 10000 test images: %d %%' % (
-            100 * correct_test / total))
+    print('Accuracy of the network on the 50000 train images: %d %%' % (
+            100 * correct_train / total))
 
 
 if __name__ == '__main__':
