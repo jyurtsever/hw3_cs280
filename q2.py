@@ -3,7 +3,7 @@ import torchvision
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
-from nets import *
+from oldNets import *
 import torch.optim as optim
 import argparse
 

@@ -39,7 +39,6 @@ class BasicBlock(nn.Module):
 
     def forward(self, x):
         identity = x
-
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
@@ -76,7 +75,6 @@ class Bottleneck(nn.Module):
 
     def forward(self, x):
         identity = x
-
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
@@ -179,7 +177,7 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2, norm_layer=norm_layer)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2, norm_layer=norm_layer)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512 * block.expansion, num_classes)
+        self.fc = nn.Linear(512* block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
