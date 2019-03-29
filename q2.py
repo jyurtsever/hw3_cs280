@@ -58,7 +58,7 @@ def train(model, optimizer, lossfn, num_epochs):
     #             iterations.append(j)
     #             running_loss = 0.0
     #
-    # print('Finished Training')
+    print('Finished Training')
     # torch.save({
     #     'epoch': epoch,
     #     'model_state_dict': model.state_dict(),
