@@ -25,9 +25,12 @@ def main():
     test(model)
 
 def train(model, optimizer, lossfn, num_epochs):
+    losses = []
+    iterations = []
     for epoch in range(num_epochs):
 
         running_loss = 0.0
+        j = 0
         for i, data in enumerate(trainloader, 0):
             # get the inputs
             inputs, labels = data
@@ -46,16 +49,26 @@ def train(model, optimizer, lossfn, num_epochs):
 
             # print statistics
             running_loss += loss.item()
-            if i % 2000 == 1999:  # print every 2000 mini-batches
+            if i % 500 == 499:  # print every 2000 mini-batches
+                j += 500
                 print('[%d, %5d] loss: %.3f' %
                         (epoch + 1, i + 1, running_loss / 500))
+                losses.append(running_loss)
+                iterations.append(j)
                 running_loss = 0.0
 
     print('Finished Training')
-    return model
+    torch.save({
+        'epoch': epoch,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+    }, args.save_test_results + "/saved_network.pt")
+    np.save("losses.npy", np.array(losses))
+    np.save("iterations.npy", iterations)
+    return model, losses, iterations
 
 def test(model):
-    correct = 0
+    correct_test = 0
     total = 0
     with torch.no_grad():
         for data in testloader:
@@ -65,10 +78,24 @@ def test(model):
             outputs = model(images)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
-            correct += (predicted == labels).sum().item()
+            correct_test += (predicted == labels).sum().item()
 
     print('Accuracy of the network on the 10000 test images: %d %%' % (
-            100 * correct / total))
+            100 * correct_test / total))
+    correct_train = 0
+    total = 0
+    with torch.no_grad():
+        for data in trainloader:
+            images, labels = data
+            if use_gpu:
+                images, labels = images.cuda(), labels.cuda()
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct_train += (predicted == labels).sum().item()
+
+    print('Accuracy of the network on the 10000 test images: %d %%' % (
+            100 * correct_test / total))
 
 
 if __name__ == '__main__':
