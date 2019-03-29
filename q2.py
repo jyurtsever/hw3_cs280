@@ -28,44 +28,44 @@ def train(model, optimizer, lossfn, num_epochs):
     losses = []
     iterations = []
     epoch = 1
-    # j = 0
-    # for epoch in range(num_epochs):
-    #
-    #     running_loss = 0.0
-    #     for i, data in enumerate(trainloader, 0):
-    #         # get the inputs
-    #         inputs, labels = data
-    #         if use_gpu:
-    #             inputs, labels = inputs.cuda(), labels.cuda()
-    #         # print(inputs.shape, labels.shape)
-    #         # zero the parameter gradients
-    #         optimizer.zero_grad()
-    #
-    #         # forward + backward + optimize
-    #         outputs = model(inputs)
-    #         # print(outputs)
-    #         loss = lossfn(outputs, labels)
-    #         loss.backward()
-    #         optimizer.step()
-    #
-    #         # print statistics
-    #         running_loss += loss.item()
-    #         if i % 500 == 499:  # print every 2000 mini-batches
-    #             j += 500
-    #             print('[%d, %5d] loss: %.3f' %
-    #                     (epoch + 1, i + 1, running_loss / 500))
-    #             losses.append(running_loss / 500)
-    #             iterations.append(j)
-    #             running_loss = 0.0
-    #
+    j = 0
+    for epoch in range(num_epochs):
+
+        running_loss = 0.0
+        for i, data in enumerate(trainloader, 0):
+            # get the inputs
+            inputs, labels = data
+            if use_gpu:
+                inputs, labels = inputs.cuda(), labels.cuda()
+            # print(inputs.shape, labels.shape)
+            # zero the parameter gradients
+            optimizer.zero_grad()
+
+            # forward + backward + optimize
+            outputs = model(inputs)
+            # print(outputs)
+            loss = lossfn(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            # print statistics
+            running_loss += loss.item()
+            if i % 500 == 499:  # print every 2000 mini-batches
+                j += 500
+                print('[%d, %5d] loss: %.3f' %
+                        (epoch + 1, i + 1, running_loss / 500))
+                losses.append(running_loss / 500)
+                iterations.append(j)
+                running_loss = 0.0
+
     print('Finished Training')
-    # torch.save({
-    #     'epoch': epoch,
-    #     'model_state_dict': model.state_dict(),
-    #     'optimizer_state_dict': optimizer.state_dict(),
-    # }, "saved_network.pt")
-    # np.save("losses.npy", np.array(losses))
-    # np.save("iterations.npy", iterations)
+    torch.save({
+        'epoch': epoch,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+    }, "saved_network.pt")
+    np.save("losses.npy", np.array(losses))
+    np.save("iterations.npy", iterations)
     return model, losses, iterations
 
 def test(model):
