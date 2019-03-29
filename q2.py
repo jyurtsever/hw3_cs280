@@ -16,7 +16,7 @@ def imshow(img):
 
 def main():
     print(args.depths, args.num_epochs)
-    model = ResNet(BasicBlock, args.depths, widths=tuple(args.widths))
+    model = ResNet(BasicBlock, args.depths, widths=tuple(args.widths), dropout=args.dropout)
     if use_gpu:
         model = model.cuda()
     lossfn = nn.CrossEntropyLoss()
@@ -125,6 +125,12 @@ if __name__ == '__main__':
         "--batch_size",  # name on the CLI - drop the `--` for positional/required parameters
         type=int,
         default=4,  # default if nothing is provided
+    )
+
+    CLI.add_argument(
+        "--dropout",  # name on the CLI - drop the `--` for positional/required parameters
+        type=float,
+        default=0,  # default if nothing is provided
     )
 
     args = CLI.parse_args()
