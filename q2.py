@@ -63,7 +63,7 @@ def train(model, optimizer, lossfn, num_epochs):
         'epoch': epoch,
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
-    }, "/saved_network.pt")
+    }, "saved_network.pt")
     np.save("losses.npy", np.array(losses))
     np.save("iterations.npy", iterations)
     return model, losses, iterations
