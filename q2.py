@@ -112,7 +112,7 @@ if __name__ == '__main__':
         "--widths",  # name on the CLI - drop the `--` for positional/required parameters
         nargs="*",  # 0 or more values expected => creates a list
         type=int,
-        default=(64, 128, 256, 512),  # default if nothing is provided
+        default= None#(64, 128, 256, 512),  # default if nothing is provided
     )
 
     CLI.add_argument(
