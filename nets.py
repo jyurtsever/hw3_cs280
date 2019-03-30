@@ -174,6 +174,7 @@ class ResNet3(nn.Module):
     def __init__(self, block, layers, widths=(64, 128, 256), num_classes=10, zero_init_residual=False,
                  dropout=0):
         super(ResNet3, self).__init__()
+
         self.inplanes = 64
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
                                bias=False)
@@ -207,6 +208,8 @@ class ResNet3(nn.Module):
                 #     nn.init.constant_(m.bn3.weight, 0)
                 if isinstance(m, BasicBlock):
                     nn.init.constant_(m.bn2.weight, 0)
+
+        print("Resnet 3 initialized")
 
     def _make_layer(self, block, planes, blocks, stride=1):
         downsample = None
