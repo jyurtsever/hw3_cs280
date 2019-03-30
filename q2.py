@@ -16,7 +16,7 @@ def imshow(img):
 
 def main():
     print(args.depths, args.num_epochs)
-    model = ResNet(BasicBlock, args.depths, widths=tuple(args.widths))
+    model = ResNet3(BasicBlock, args.depths, widths=tuple(args.widths), dropout=args.dropout)
     if use_gpu:
         model = model.cuda()
     lossfn = nn.CrossEntropyLoss()
@@ -28,10 +28,10 @@ def train(model, optimizer, lossfn, num_epochs):
     losses = []
     iterations = []
     epoch = 1
+    j = 0
     for epoch in range(num_epochs):
 
         running_loss = 0.0
-        j = 0
         for i, data in enumerate(trainloader, 0):
             # get the inputs
             inputs, labels = data
@@ -54,7 +54,7 @@ def train(model, optimizer, lossfn, num_epochs):
                 j += 500
                 print('[%d, %5d] loss: %.3f' %
                         (epoch + 1, i + 1, running_loss / 500))
-                losses.append(running_loss)
+                losses.append(running_loss / 500)
                 iterations.append(j)
                 running_loss = 0.0
 
@@ -112,7 +112,7 @@ if __name__ == '__main__':
         "--widths",  # name on the CLI - drop the `--` for positional/required parameters
         nargs="*",  # 0 or more values expected => creates a list
         type=int,
-        default=(64, 128, 256, 512),  # default if nothing is provided
+        default= (64, 128, 256, 512),  # default if nothing is provided
     )
 
     CLI.add_argument(
@@ -125,6 +125,12 @@ if __name__ == '__main__':
         "--batch_size",  # name on the CLI - drop the `--` for positional/required parameters
         type=int,
         default=4,  # default if nothing is provided
+    )
+
+    CLI.add_argument(
+        "--dropout",  # name on the CLI - drop the `--` for positional/required parameters
+        type=float,
+        default=0,  # default if nothing is provided
     )
 
     args = CLI.parse_args()
