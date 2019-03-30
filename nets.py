@@ -1,5 +1,6 @@
 import torch.nn as nn
 import torch.utils.data as data
+import torch
 import numpy as np
 
 
@@ -246,10 +247,13 @@ class RotDataset(data.Dataset):
         self.items = []
         for i in range(len(base_dataset)):
             img = base_dataset[i][0]
+            if i == 0:
+                print(img.shape)
+                print(torch.Tensor(np.rot90(img, k=1, axes=(1, 2)).copy()).shape)
             self.items.append((img, 0))
-            self.items.append((np.rot90(img, k=1, axes=(0, 1)), 1))
-            self.items.append((np.rot90(img, k=2, axes=(0, 1)), 2))
-            self.items.append((np.rot90(img, k=3, axes=(0, 1)), 3))
+            self.items.append((torch.Tensor(np.rot90(img, k=1, axes=(1, 2)).copy()), 1))
+            self.items.append((torch.Tensor(np.rot90(img, k=2, axes=(1, 2)).copy()), 2))
+            self.items.append((torch.Tensor(np.rot90(img, k=3, axes=(1, 2)).copy()), 3))
     
 
     def __len__(self):
