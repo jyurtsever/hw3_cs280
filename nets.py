@@ -171,7 +171,7 @@ class ResNet(nn.Module):
 
 class ResNet3(nn.Module):
 
-    def __init__(self, block, layers, widths=(64, 128, 256, 512), num_classes=10, zero_init_residual=False,
+    def __init__(self, block, layers, widths=(64, 128, 256), num_classes=10, zero_init_residual=False,
                  dropout=0):
         super(ResNet3, self).__init__()
         self.inplanes = 64
