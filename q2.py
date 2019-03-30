@@ -16,7 +16,7 @@ def imshow(img):
 
 def main():
     print(args.depths, args.num_epochs)
-    model = ResNet(BasicBlock, args.depths, widths=tuple(args.widths), dropout=args.dropout)
+    model = ResNet3(BasicBlock, args.depths, widths=tuple(args.widths), dropout=args.dropout)
     if use_gpu:
         model = model.cuda()
     lossfn = nn.CrossEntropyLoss()
