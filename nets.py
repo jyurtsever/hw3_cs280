@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torch.utils.data as data
 import numpy as np
@@ -239,6 +240,7 @@ class ResNet3(nn.Module):
         # x = self.layer4(x)
         x = self.avgpool(x)
         # x = x.view(x.size(0), -1)
+        x = torch.mean(x, 2)
         if self.dropout is not None:
             x = self.dropout(x)
         x = self.fc(x)
