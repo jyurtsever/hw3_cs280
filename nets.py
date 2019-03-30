@@ -191,6 +191,7 @@ class ResNet3(nn.Module):
         else:
             self.dropout = None
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.avgpool2 = nn.AvgPool2d((2, 2))
         self.fc = nn.Linear(widths[2] * block.expansion, num_classes)
 
         for m in self.modules():
@@ -241,7 +242,9 @@ class ResNet3(nn.Module):
         # x = self.avgpool(x)
         # x = x.view(x.size(0), -1)
         # print(x.size())
-        x = torch.mean(torch.mean(x, 2), 2)
+        # x = torch.mean(torch.mean(x, 2), 2)
+        x = self.avgpool2(x)
+        x = x.view(x.size(0), -1)
         # print(x.size())
 
         if self.dropout is not None:
