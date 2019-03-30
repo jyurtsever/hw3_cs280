@@ -190,7 +190,7 @@ class ResNet3(nn.Module):
         else:
             self.dropout = None
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(widths[-1] * block.expansion, num_classes)
+        self.fc = nn.Linear(widths[2] * block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
