@@ -15,26 +15,31 @@ def imshow(img):
 
 
 def main():
-    print(args.depths, args.num_epochs)
-    model = ResNet(BasicBlock, args.depths, widths=tuple(args.widths), num_classes=4)
+    print([2, 2, 2, 2], 4)
+    print("Making model")
+    model = ResNet(BasicBlock, [2, 2, 2, 2], widths=tuple((64, 128, 256, 512)), num_classes=4)
     if use_gpu:
         model = model.cuda()
     lossfn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters())
-    train(model, optimizer, lossfn, args.num_epochs)
+    print("Started training")
+    model, losses, epochs = train(model, optimizer, lossfn, 15)
+    
+    plt.figure()
+    plt.plot(epochs, losses)
+    plt.show()
 
 def train(model, optimizer, lossfn, num_epochs):
-    print("Num epochs", num_epochs, "\n")
     losses = []
+    epochs = []
     for epoch in range(num_epochs):
-        print(epoch)
-        running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
+            if i % 500 == 0:
+              print(epoch, i)
             # get the inputs
+            inputs, labels = data
             if use_gpu:
                 inputs, labels = inputs.cuda(), labels.cuda()
-            else:
-                inputs, labels = data
             # print(inputs.shape, labels.shape)
             # zero the parameter gradients
             optimizer.zero_grad()
@@ -45,56 +50,78 @@ def train(model, optimizer, lossfn, num_epochs):
             loss = lossfn(outputs, labels)
             loss.backward()
             optimizer.step()
-
-            # print statistics
-            running_loss += loss.item()
-        losses.append(running_loss/(i+1))
+        
+        ## Calculate training loss for current epoch
+        epoch_loss = 0.
+        num_batches = 0
+        with torch.no_grad():
+          for data in trainloader:
+            inputs, labels = data
+            if use_gpu:
+              inputs, labels = inputs.cuda(), labels.cuda()
+            outputs = model(inputs)
+            epoch_loss += lossfn(outputs, labels).item()
+            num_batches += 1
+        epoch_loss /= num_batches
+        losses.append(epoch_loss)
+        epochs.append(epoch)
 
     print('Finished Training')
-    plt.figure()
-    plt.plot(list(range(num_epochs)), losses)
-    plt.show()
-
-    return model
+    torch.save({
+        'epoch': epoch,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+    }, "saved_network.pt")
+    np.save("losses.npy", np.array(losses))
+    np.save("epochs.npy", epochs)
+    return model, losses, epochs
 
 if __name__ == '__main__':
-    CLI = argparse.ArgumentParser()
-    CLI.add_argument(
-        "--depths",  # name on the CLI - drop the `--` for positional/required parameters
-        nargs="*",  # 0 or more values expected => creates a list
-        type=int,
-        default=[2, 2, 2, 2],  # default if nothing is provided
-    )
+#     CLI = argparse.ArgumentParser()
+#     CLI.add_argument(
+#         "--depths",  # name on the CLI - drop the `--` for positional/required parameters
+#         nargs="*",  # 0 or more values expected => creates a list
+#         type=int,
+#         default=[2, 2, 2, 2],  # default if nothing is provided
+#     )
 
-    CLI.add_argument(
-        "--widths",  # name on the CLI - drop the `--` for positional/required parameters
-        nargs="*",  # 0 or more values expected => creates a list
-        type=int,
-        default=(64, 128, 256, 512),  # default if nothing is provided
-    )
+#     CLI.add_argument(
+#         "--widths",  # name on the CLI - drop the `--` for positional/required parameters
+#         nargs="*",  # 0 or more values expected => creates a list
+#         type=int,
+#         default=(64, 128, 256, 512),  # default if nothing is provided
+#     )
 
-    CLI.add_argument(
-        "--num_epochs",  # name on the CLI - drop the `--` for positional/required parameters
-        type=int,
-        default=4,  # default if nothing is provided
-    )
+#     CLI.add_argument(
+#         "--num_epochs",  # name on the CLI - drop the `--` for positional/required parameters
+#         type=int,
+#         default=4,  # default if nothing is provided
+#     )
 
-    CLI.add_argument(
-        "--batch_size",  # name on the CLI - drop the `--` for positional/required parameters
-        type=int,
-        default=4,  # default if nothing is provided
-    )
+#     CLI.add_argument(
+#         "--batch_size",  # name on the CLI - drop the `--` for positional/required parameters
+#         type=int,
+#         default=4,  # default if nothing is provided
+#     )
 
-    args = CLI.parse_args()
+    # args = {}
     transform = transforms.Compose(
         [transforms.ToTensor(),
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    
+    print("Started loading CIFAR")
+    
+    cifarset = torchvision.datasets.CIFAR10(root='./data', train=True,
+                                            download=True, transform=transform)
 
-    trainset = RotDataset(torchvision.datasets.CIFAR10(root='./data', train=True,
-                                            download=True, transform=transform))
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size,
+    trainset = RotDataset(cifarset)
+    
+    print(len(cifarset))
+    print(len(trainset))
+    
+    print("Done loading CIFAR")
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=4,
                                               shuffle=True)
-
     classes = ('plane', 'car', 'bird', 'cat',
                'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
     use_gpu = torch.cuda.is_available()
