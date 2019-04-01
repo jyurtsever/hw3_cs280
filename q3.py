@@ -25,9 +25,9 @@ def main():
     print("Started training")
     model, losses, epochs = train(model, optimizer, lossfn, 15)
     
-    plt.figure()
-    plt.plot(epochs, losses)
-    plt.show()
+#    plt.figure()
+#    plt.plot(epochs, losses)
+#    plt.show()
 
 def train(model, optimizer, lossfn, num_epochs):
     losses = []
